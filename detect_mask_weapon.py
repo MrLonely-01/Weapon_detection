@@ -3,7 +3,9 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from ultralytics import YOLO
-
+from playsound import playsound
+import threading
+import time
 
 mask_model = load_model("mask_detector.model")
 weapon_model = YOLO("best.pt")
@@ -75,7 +77,13 @@ while True:
                     (20, 40), cv2.FONT_HERSHEY_SIMPLEX,
                     1, (0, 0, 255), 3)
 
+    lsat_alert_time=0
+    def play_alert():
+        playsound("alert.wav")
 
+    if current_time - last_alert_time > 2:
+        threading.Thread(target=play_alert).start()
+        last_alert_time = current_time
     
     cv2.imshow("Mask + Weapon Detection", annotated_frame)
 
